@@ -3,7 +3,7 @@ import { Section } from '@/components/layout/Section';
 import { Button } from '@/components/ui/Button';
 import { Doodle } from '@/components/brand/Doodle';
 import { SEO } from '@/components/common/SEO';
-import { getWhatsAppNumber } from '@/lib/whatsapp';
+import { buildWhatsAppLink } from '@/lib/whatsapp';
 import { trackEvent } from '@/lib/analytics';
 
 export const Contact: React.FC = () => {
@@ -22,7 +22,7 @@ export const Contact: React.FC = () => {
     }
   };
 
-  const whatsappNumber = getWhatsAppNumber();
+  const whatsappUrl = buildWhatsAppLink();
 
   return (
     <div className="min-h-screen bg-cream">
@@ -52,7 +52,7 @@ export const Contact: React.FC = () => {
                 Need quick order status or want to pay via UPI? Message Saniya directly:
               </p>
               <a
-                href={`https://wa.me/${whatsappNumber}`}
+                href={whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-4 py-2.5 rounded-pill bg-ink text-cream text-xs uppercase tracking-button font-medium hover:bg-heart transition-all"

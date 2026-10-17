@@ -5,7 +5,8 @@ import { Doodle } from '@/components/brand/Doodle';
 import { Container } from './Container';
 
 import { useSiteSettings } from '@/hooks/useSiteSettings';
-import { getCleanInstagramHandle, getCleanWhatsAppNumber } from '@/lib/socialOrder';
+import { getCleanInstagramHandle } from '@/lib/socialOrder';
+import { buildWhatsAppLink } from '@/lib/whatsapp';
 
 export const Footer: React.FC = () => {
   const { settings } = useSiteSettings();
@@ -13,7 +14,7 @@ export const Footer: React.FC = () => {
   const [subscribed, setSubscribed] = useState(false);
 
   const cleanHandle = getCleanInstagramHandle(settings.instagramHandle);
-  const cleanPhone = getCleanWhatsAppNumber(settings.whatsappNumber);
+  const whatsappUrl = buildWhatsAppLink('', settings.whatsappNumber);
 
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,7 +48,7 @@ export const Footer: React.FC = () => {
                 <Doodle name="heart" size={12} className="text-heart" />
               </a>
               <a
-                href={`https://wa.me/${cleanPhone}`}
+                href={whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1.5 text-xs font-sans uppercase tracking-button font-medium py-1.5 px-3 rounded-pill border border-hairline bg-ivory hover:text-heart hover:border-heart transition-all"

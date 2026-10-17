@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import type { Database } from '@/types/supabase';
 import { Doodle } from '@/components/brand/Doodle';
+import { buildWhatsAppLink } from '@/lib/whatsapp';
 
 type EnquiryRow = Database['public']['Tables']['enquiries']['Row'];
 
@@ -384,7 +385,7 @@ export const AdminEnquiries: React.FC = () => {
                       href={
                         enq.customer_phone
                           ? `https://wa.me/${enq.customer_phone.replace(/\D/g, '')}`
-                          : 'https://wa.me/919175865700'
+                          : buildWhatsAppLink()
                       }
                       target="_blank"
                       rel="noopener noreferrer"

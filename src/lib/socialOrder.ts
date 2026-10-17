@@ -1,12 +1,16 @@
 import { supabase, isSupabaseConfigured } from './supabase';
+import { buildWhatsAppLink, DEFAULT_WHATSAPP_LINK } from './whatsapp';
 import type { CartSnapshot, CartSnapshotItem } from '../types/commerce';
 import type { Json } from '../types/supabase';
 
 /**
- * Extracts a clean international phone number without +, spaces, or dashes
+ * Returns a valid WhatsApp destination (URL or phone digits)
  */
 export const getCleanWhatsAppNumber = (customNumber?: string): string => {
-  const raw = customNumber || import.meta.env.VITE_WHATSAPP_NUMBER || '916362044074';
+  const raw = customNumber || import.meta.env?.VITE_WHATSAPP_URL || import.meta.env?.VITE_WHATSAPP_NUMBER || DEFAULT_WHATSAPP_LINK;
+  if (raw.includes('wa.me') || raw.startsWith('http')) {
+    return raw;
+  }
   return raw.replace(/[^0-9]/g, '');
 };
 
@@ -14,7 +18,7 @@ export const getCleanWhatsAppNumber = (customNumber?: string): string => {
  * Extracts a clean Instagram username (e.g. "saylipss.co")
  */
 export const getCleanInstagramHandle = (customHandle?: string): string => {
-  const raw = customHandle || import.meta.env.VITE_INSTAGRAM_HANDLE || 'saylipss.co';
+  const raw = customHandle || import.meta.env?.VITE_INSTAGRAM_HANDLE || 'saylipss.co';
   return raw
     .replace(/^https?:\/\/(www\.)?instagram\.com\//i, '')
     .replace(/^@/, '')
@@ -178,8 +182,7 @@ export const executeSocialOrder = async (params: {
   // Generate chat link
   let url: string;
   if (params.channel === 'whatsapp') {
-    const phone = getCleanWhatsAppNumber(params.whatsappNumberOverride);
-    url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+    url = buildWhatsAppLink(message, params.whatsappNumberOverride);
   } else {
     const handle = getCleanInstagramHandle(params.instagramHandleOverride);
     // ig.me deep link directly opens conversation with prefilled text support on mobile apps
