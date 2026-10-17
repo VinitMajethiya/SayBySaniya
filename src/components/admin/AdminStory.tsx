@@ -19,6 +19,13 @@ export interface StoryContentData {
   hero_caption: string;
   instagram_handle: string;
   gallery: StoryPhoto[];
+  teaser_eyebrow?: string;
+  teaser_heading?: string;
+  teaser_body?: string;
+  teaser_cta_text?: string;
+  teaser_cta_link?: string;
+  teaser_badge?: string;
+  teaser_caption?: string;
 }
 
 const DEFAULT_STORY: StoryContentData = {
@@ -35,6 +42,14 @@ const DEFAULT_STORY: StoryContentData = {
   hero_caption: 'Saniya in her kitchen studio hand-pouring organic balms',
   instagram_handle: 'saylipss.co',
   gallery: [],
+  teaser_eyebrow: 'BEHIND THE TIN',
+  teaser_heading: '"It started in a kitchen, with a few ingredients and one very dry pair of lips."',
+  teaser_body:
+    'Say by Saniya started with my own struggle with dry lips. Crafted in small batches with pure unrefined beeswax, raw honey, and cold-pressed plant oils. Poured by hand with genuine care.',
+  teaser_cta_text: 'Read Our Story',
+  teaser_cta_link: '/our-story',
+  teaser_badge: 'Small batch',
+  teaser_caption: 'Made with ♥ by hand',
 };
 
 export const AdminStory: React.FC = () => {
@@ -70,9 +85,18 @@ export const AdminStory: React.FC = () => {
         if (error) throw error;
         if (data && data.value) {
           const val = data.value as unknown as Partial<StoryContentData>;
+          const teaser_heading = val.teaser_heading || val.quote || DEFAULT_STORY.teaser_heading;
+          const teaser_body =
+            val.teaser_body ||
+            (val.story_paragraphs && val.story_paragraphs[0]
+              ? val.story_paragraphs[0].trim()
+              : DEFAULT_STORY.teaser_body);
+
           setStory({
             ...DEFAULT_STORY,
             ...val,
+            teaser_heading,
+            teaser_body,
             story_paragraphs:
               val.story_paragraphs && val.story_paragraphs.length > 0
                 ? val.story_paragraphs
@@ -327,6 +351,126 @@ export const AdminStory: React.FC = () => {
                   placeholder='"It started in a kitchen, with a few ingredients and one very dry pair of lips."'
                   className="w-full px-3 py-1.5 rounded border border-hairline bg-cream text-xs font-sans text-ink focus:outline-none focus:border-ink"
                 />
+              </div>
+            </div>
+          </div>
+
+          {/* SECTION 1.5: HOMEPAGE "BEHIND THE TIN" TEASER CARD */}
+          <div className="p-6 bg-ivory rounded-card border border-hairline space-y-4">
+            <div className="flex items-center justify-between pb-2 border-hairline-b">
+              <h3 className="font-display text-lg font-semibold text-ink flex items-center gap-2">
+                <Doodle name="heart" size={16} className="text-heart" />
+                <span>Homepage &quot;Behind the Tin&quot; Teaser Section</span>
+              </h3>
+              <span className="text-[10px] text-ink-soft uppercase font-mono tracking-wider px-2 py-0.5 rounded-full bg-cream border border-hairline">
+                Featured on Homepage
+              </span>
+            </div>
+
+            <p className="text-xs text-ink-soft">
+              Customize the story hook, summary paragraph (replaces [TBD]), and Polaroid frame displayed in the &quot;Behind the Tin&quot; section on the homepage.
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="text-xs font-sans font-medium text-ink block mb-1">
+                  Section Eyebrow Label
+                </label>
+                <input
+                  type="text"
+                  value={story.teaser_eyebrow || ''}
+                  onChange={(e) => setStory({ ...story, teaser_eyebrow: e.target.value })}
+                  placeholder="BEHIND THE TIN"
+                  className="w-full px-3 py-1.5 rounded border border-hairline bg-cream text-xs font-sans text-ink focus:outline-none focus:border-ink uppercase"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-sans font-medium text-ink block mb-1">
+                  CTA Button Text
+                </label>
+                <input
+                  type="text"
+                  value={story.teaser_cta_text || ''}
+                  onChange={(e) => setStory({ ...story, teaser_cta_text: e.target.value })}
+                  placeholder="Read Our Story"
+                  className="w-full px-3 py-1.5 rounded border border-hairline bg-cream text-xs font-sans text-ink focus:outline-none focus:border-ink"
+                />
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="text-xs font-sans font-medium text-ink block mb-1">
+                  Main Headline / Story Hook
+                </label>
+                <input
+                  type="text"
+                  value={story.teaser_heading || ''}
+                  onChange={(e) => setStory({ ...story, teaser_heading: e.target.value })}
+                  placeholder='"It started in a kitchen, with a few ingredients and one very dry pair of lips."'
+                  className="w-full px-3 py-1.5 rounded border border-hairline bg-cream text-xs font-sans text-ink font-semibold focus:outline-none focus:border-ink"
+                />
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="text-xs font-sans font-medium text-ink block mb-1">
+                  Story Teaser Description / Body Text (Replaces [TBD] box)
+                </label>
+                <textarea
+                  rows={3}
+                  value={story.teaser_body || ''}
+                  onChange={(e) => setStory({ ...story, teaser_body: e.target.value })}
+                  placeholder="A short, warm summary about your journey, kitchen creation, and organic ingredients..."
+                  className="w-full px-3 py-1.5 rounded border border-hairline bg-cream text-xs font-sans text-ink focus:outline-none focus:border-ink leading-relaxed"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-sans font-medium text-ink block mb-1">
+                  Polaroid Badge Label
+                </label>
+                <input
+                  type="text"
+                  value={story.teaser_badge || ''}
+                  onChange={(e) => setStory({ ...story, teaser_badge: e.target.value })}
+                  placeholder="Small batch"
+                  className="w-full px-3 py-1.5 rounded border border-hairline bg-cream text-xs font-sans text-ink focus:outline-none focus:border-ink"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-sans font-medium text-ink block mb-1">
+                  Polaroid Frame Script Tagline
+                </label>
+                <input
+                  type="text"
+                  value={story.teaser_caption || ''}
+                  onChange={(e) => setStory({ ...story, teaser_caption: e.target.value })}
+                  placeholder="Made with ♥ by hand"
+                  className="w-full px-3 py-1.5 rounded border border-hairline bg-cream text-xs font-script text-base text-ink focus:outline-none focus:border-ink"
+                />
+              </div>
+            </div>
+
+            {/* Live Teaser Preview Box */}
+            <div className="mt-4 p-4 bg-cream/70 rounded-card border border-hairline space-y-2">
+              <span className="text-[10px] font-sans font-semibold uppercase tracking-wider text-ink-soft">
+                Live Teaser Preview (Homepage):
+              </span>
+              <div className="p-4 bg-ivory rounded border border-hairline space-y-2">
+                <span className="text-[10px] uppercase tracking-eyebrow text-ink-soft font-sans font-medium block">
+                  {story.teaser_eyebrow || 'BEHIND THE TIN'}
+                </span>
+                <h4 className="font-display text-lg font-semibold text-ink leading-snug">
+                  {story.teaser_heading || story.quote || '"It started in a kitchen..."'}
+                </h4>
+                <p className="text-xs text-ink-soft leading-relaxed">
+                  {story.teaser_body || 'Say by Saniya started right in my home kitchen in India...'}
+                </p>
+                <div className="pt-1">
+                  <span className="inline-block px-3 py-1 rounded-pill border border-hairline text-[11px] font-medium text-ink">
+                    {story.teaser_cta_text || 'Read Our Story'} →
+                  </span>
+                </div>
               </div>
             </div>
           </div>
