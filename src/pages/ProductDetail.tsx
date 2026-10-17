@@ -223,7 +223,7 @@ export const ProductDetail: React.FC = () => {
             <div className="lg:col-span-6 space-y-4">
               <div className="relative aspect-square rounded-card border-hairline bg-ivory p-6 sm:p-10 flex items-center justify-center overflow-hidden">
                 <ProductImage
-                  src={product.images && product.images[0]}
+                  src={product.images && (isOpenView && product.images[1] ? product.images[1] : product.images[0])}
                   alt={`${product.name} packaging`}
                   flavor={product.flavor}
                   accent={product.accent}

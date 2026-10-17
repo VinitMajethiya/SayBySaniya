@@ -15,6 +15,9 @@ public/products/
 ├── vanilla-silk/
 │   ├── hero.webp       # Front / hero shot on cream background (flat lay with vanilla pods)
 │   └── open.webp       # Open slider tin showing balm well
+├── over-night-lip-mask/
+│   ├── hero.jpg / hero.webp # Hero shot of clear jar with gold rim (1200px wide square)
+│   └── open.webp       # Lid off showing pale blue-grey balm well
 └── blood-water-tint/
     └── hero.webp       # Seasonal drop hero shot
 ```
