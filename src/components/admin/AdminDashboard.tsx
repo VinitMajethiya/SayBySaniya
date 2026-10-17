@@ -97,6 +97,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate }) =>
       color: 'text-heart',
       bg: 'bg-cream',
     },
+    {
+      title: 'Our Story & Photos',
+      count: 'Live',
+      action: "Edit Saniya's Story & Gallery",
+      tab: 'story',
+      doodle: 'bow' as const,
+      color: 'text-ink',
+      bg: 'bg-ivory',
+    },
   ];
 
   return (

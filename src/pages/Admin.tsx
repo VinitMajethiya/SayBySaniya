@@ -4,11 +4,24 @@ import { AdminLogin } from '@/components/admin/AdminLogin';
 import { AdminDashboard } from '@/components/admin/AdminDashboard';
 import { AdminProducts } from '@/components/admin/AdminProducts';
 import { AdminDeals } from '@/components/admin/AdminDeals';
+import { AdminEnquiries } from '@/components/admin/AdminEnquiries';
+import { AdminOrders } from '@/components/admin/AdminOrders';
+import { AdminReviews } from '@/components/admin/AdminReviews';
+import { AdminStory } from '@/components/admin/AdminStory';
 import { Doodle } from '@/components/brand/Doodle';
+
+export type AdminTab =
+  | 'dashboard'
+  | 'products'
+  | 'enquiries'
+  | 'orders'
+  | 'deals'
+  | 'reviews'
+  | 'story';
 
 export const Admin: React.FC = () => {
   const { user, isAdmin, loading, error, login, logout } = useAdminAuth();
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'products' | 'deals' | 'enquiries' | 'reviews' | 'settings'>('dashboard');
+  const [activeTab, setActiveTab] = useState<AdminTab>('dashboard');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Inject noindex meta tag to ensure search engines never index the admin portal
@@ -45,10 +58,14 @@ export const Admin: React.FC = () => {
     return <AdminLogin onLogin={login} loading={loading} error={error} />;
   }
 
-  const tabs = [
-    { id: 'dashboard', label: 'Dashboard', icon: 'heart' as const },
-    { id: 'products', label: 'Products & Photos', icon: 'bow' as const },
-    { id: 'deals', label: 'Special Deals', icon: 'sparkle' as const },
+  const tabs: { id: AdminTab; label: string; icon: 'heart' | 'bow' | 'sparkle' | 'star' }[] = [
+    { id: 'dashboard', label: 'Dashboard', icon: 'heart' },
+    { id: 'products', label: 'Products & Photos', icon: 'bow' },
+    { id: 'enquiries', label: 'Enquiries', icon: 'heart' },
+    { id: 'orders', label: 'Orders', icon: 'sparkle' },
+    { id: 'deals', label: 'Special Deals', icon: 'sparkle' },
+    { id: 'reviews', label: 'Reviews', icon: 'star' },
+    { id: 'story', label: 'Our Story & Photos', icon: 'bow' },
   ];
 
   return (
@@ -134,9 +151,13 @@ export const Admin: React.FC = () => {
 
       {/* Main Admin Content Container */}
       <main className="flex-grow max-w-6xl w-full mx-auto p-4 sm:p-6 lg:p-8">
-        {activeTab === 'dashboard' && <AdminDashboard onNavigate={(t) => setActiveTab(t as typeof activeTab)} />}
+        {activeTab === 'dashboard' && <AdminDashboard onNavigate={(t) => setActiveTab(t as AdminTab)} />}
         {activeTab === 'products' && <AdminProducts />}
+        {activeTab === 'enquiries' && <AdminEnquiries />}
+        {activeTab === 'orders' && <AdminOrders />}
         {activeTab === 'deals' && <AdminDeals />}
+        {activeTab === 'reviews' && <AdminReviews />}
+        {activeTab === 'story' && <AdminStory />}
       </main>
 
       {/* Admin Mobile Footer Tab Bar */}
