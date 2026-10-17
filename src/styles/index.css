@@ -1,0 +1,74 @@
+@import './tokens.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    border-color: var(--hairline);
+  }
+
+  body {
+    background-color: var(--cream);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    overflow-x: hidden;
+  }
+
+  /* Focus ring rule from DESIGN.md §11 */
+  :focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 2px;
+  }
+
+  /* Accessibility: Prefers reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer utilities {
+  .border-hairline {
+    border: 1px solid var(--hairline);
+  }
+
+  .border-hairline-t {
+    border-top: 1px solid var(--hairline);
+  }
+
+  .border-hairline-b {
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .border-hairline-l {
+    border-left: 1px solid var(--hairline);
+  }
+
+  .border-hairline-r {
+    border-right: 1px solid var(--hairline);
+  }
+
+  .font-script {
+    font-family: var(--font-script);
+  }
+
+  .font-display {
+    font-family: var(--font-display);
+  }
+
+  .font-sans {
+    font-family: var(--font-sans);
+  }
+
+  .font-meme {
+    font-family: 'Archivo Black', sans-serif;
+  }
+}

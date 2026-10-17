@@ -1,0 +1,57 @@
+:root {
+  /* Core palette */
+  --cream: #F6F1E7;
+  --ivory: #FBF8F2;
+  --ink: #1A1A1A;
+  --ink-soft: #5B5651;
+  --hairline: rgba(26, 26, 26, 0.85);
+
+  /* Flavor accents */
+  --strawberry: #F0A8BE;
+  --honey: #E8C58A;
+  --vanilla: #F3E7C9;
+  --future: #E9B7C9;
+
+  /* Support colors */
+  --heart: #EE6C8E;
+  --tin: #C9CACB;
+  --denim: #BFD3E6;
+  --blood: #8B1A1A;
+  --gold: #D4AF37;
+  --cap-white: #F8F9FA;
+  --jar-mask: #BFD3D0;
+  --success: #4F7A5A;
+  --error: #B3261E;
+
+  /* Spacing Scale (DESIGN.md §5) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 72px;
+  --space-24: 112px;
+
+  /* Typography */
+  --font-script: 'Alex Brush', cursive;
+  --font-display: 'Playfair Display', serif;
+  --font-sans: 'DM Sans', sans-serif;
+
+  /* Transitions */
+  --ease-brand: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-fast: 200ms;
+  --duration-normal: 300ms;
+  --duration-slow: 400ms;
+}
+
+/* Seasonal Drop Theme (DESIGN.md §10) */
+.theme-drop-blood {
+  --cream: #1C0A0C;
+  --ivory: #2B0F13;
+  --ink: #F6F1E7;
+  --ink-soft: #D3B2B6;
+  --hairline: rgba(246, 241, 231, 0.85);
+  --heart: #FF4A6E;
+}
