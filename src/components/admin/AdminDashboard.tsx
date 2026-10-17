@@ -115,6 +115,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate }) =>
       color: 'text-heart',
       bg: 'bg-cream',
     },
+    {
+      title: 'Instagram Mood & Reels',
+      count: 'Active',
+      action: 'Update Featured Post & Link',
+      tab: 'story',
+      doodle: 'sparkle' as const,
+      color: 'text-strawberry',
+      bg: 'bg-ivory',
+    },
   ];
 
   return (

@@ -56,3 +56,27 @@ export const DEFAULT_ABOUT_BRAND: AboutBrandData = {
   ctaText: 'Shop the Collection',
   ctaLink: '/shop',
 };
+
+export interface InstagramMoodData {
+  eyebrow: string;
+  headline: string;
+  highlightText?: string;
+  subtitle: string;
+  postUrl: string;
+  badgeTitle: string;
+  badgeSubtitle: string;
+  imageUrl?: string;
+  isActive: boolean;
+}
+
+export const DEFAULT_INSTAGRAM_MOOD: InstagramMoodData = {
+  eyebrow: 'INSTAGRAM MOOD',
+  headline: '"Reapply every 10 min? Nahi karenge."',
+  highlightText: 'Nahi karenge.',
+  subtitle: 'Me & my Say By Saniya lip balm against the world. ♥',
+  postUrl: 'https://www.instagram.com/saylipss.co',
+  badgeTitle: 'YES SIR.',
+  badgeSubtitle: '100% Organic & Homemade',
+  imageUrl: '',
+  isActive: true,
+};
