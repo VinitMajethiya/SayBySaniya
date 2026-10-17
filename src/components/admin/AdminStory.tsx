@@ -199,6 +199,42 @@ export const AdminStory: React.FC = () => {
     }
   };
 
+  const renderMoodHeadline = () => {
+    const rawHeadline = mood.headline || '"Reapply every 10 min? Nahi karenge."';
+    const highlight = mood.highlightText?.trim();
+
+    if (!highlight) {
+      return <span>{rawHeadline}</span>;
+    }
+
+    const escaped = highlight.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(`(${escaped})`, 'i');
+
+    if (!regex.test(rawHeadline)) {
+      return <span>{rawHeadline}</span>;
+    }
+
+    const parts = rawHeadline.split(regex);
+    return (
+      <>
+        {parts.map((part, idx) => {
+          if (part.toLowerCase() === highlight.toLowerCase()) {
+            return (
+              <span
+                key={idx}
+                className="text-heart underline decoration-wavy underline-offset-4"
+                style={{ color: '#EE6C8E', textDecorationColor: '#EE6C8E' }}
+              >
+                {part}
+              </span>
+            );
+          }
+          return <React.Fragment key={idx}>{part}</React.Fragment>;
+        })}
+      </>
+    );
+  };
+
   const handleAddParagraph = () => {
     setStory((prev) => ({
       ...prev,
@@ -689,7 +725,7 @@ export const AdminStory: React.FC = () => {
                     <span className="text-[10px] text-heart">Tap to view post ↗</span>
                   </div>
                   <h4 className="font-meme text-xl text-ink leading-tight uppercase">
-                    {mood.headline || '"Reapply every 10 min? Nahi karenge."'}
+                    {renderMoodHeadline()}
                   </h4>
                   <p className="font-display italic text-sm text-ink-soft">
                     {mood.subtitle || 'Me & my Say By Saniya lip balm against the world. ♥'}

@@ -36,23 +36,39 @@ export const MemeBlock: React.FC = () => {
     return null;
   }
 
-  // Helper to highlight specific text in headline if specified
+  // Helper to highlight specific text in headline case-insensitively with pink wavy underline
   const renderHeadline = () => {
     const rawHeadline = mood.headline || DEFAULT_INSTAGRAM_MOOD.headline;
     const highlight = mood.highlightText?.trim();
 
-    if (!highlight || !rawHeadline.includes(highlight)) {
+    if (!highlight) {
       return <span>{rawHeadline}</span>;
     }
 
-    const parts = rawHeadline.split(highlight);
+    const escaped = highlight.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(`(${escaped})`, 'i');
+
+    if (!regex.test(rawHeadline)) {
+      return <span>{rawHeadline}</span>;
+    }
+
+    const parts = rawHeadline.split(regex);
     return (
       <>
-        {parts[0]}
-        <span className="text-heart underline decoration-wavy underline-offset-4">
-          {highlight}
-        </span>
-        {parts.slice(1).join(highlight)}
+        {parts.map((part, idx) => {
+          if (part.toLowerCase() === highlight.toLowerCase()) {
+            return (
+              <span
+                key={idx}
+                className="text-heart underline decoration-wavy underline-offset-4"
+                style={{ color: '#EE6C8E', textDecorationColor: '#EE6C8E' }}
+              >
+                {part}
+              </span>
+            );
+          }
+          return <React.Fragment key={idx}>{part}</React.Fragment>;
+        })}
       </>
     );
   };
