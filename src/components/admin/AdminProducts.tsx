@@ -8,6 +8,9 @@ type ProductRow = Database['public']['Tables']['products']['Row'];
 
 export const AdminProducts: React.FC = () => {
   const [products, setProducts] = useState<ProductRow[]>([]);
+  const [productExtras, setProductExtras] = useState<
+    Record<string, { how_to_use?: string; return_policy?: string; allergy_advice?: string }>
+  >({});
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [editingProduct, setEditingProduct] = useState<Partial<ProductRow> | null>(null);
@@ -18,13 +21,23 @@ export const AdminProducts: React.FC = () => {
   const fetchProducts = useCallback(async () => {
     setLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('products')
-        .select('*')
-        .order('sort_order', { ascending: true });
+      const [productsRes, extrasRes] = await Promise.all([
+        supabase
+          .from('products')
+          .select('*')
+          .order('sort_order', { ascending: true }),
+        supabase
+          .from('site_settings')
+          .select('value')
+          .eq('key', 'product_extras')
+          .maybeSingle(),
+      ]);
 
-      if (!error && data) {
-        setProducts(data);
+      if (!productsRes.error && productsRes.data) {
+        setProducts(productsRes.data);
+      }
+      if (extrasRes.data?.value) {
+        setProductExtras(extrasRes.data.value as any);
       }
     } finally {
       setLoading(false);
@@ -56,7 +69,11 @@ export const AdminProducts: React.FC = () => {
       images: [],
       ingredients: [],
       claims: ['100% Organic & Homemade', 'Nourish. Tint. Love.', 'Pocket-Sized Slider Tin'],
-      how_to_use: 'Slide open and smooth over clean lips.',
+      how_to_use: 'Slide open and smooth over clean lips whenever they need love.',
+      return_policy:
+        'Due to the hygienic nature of homemade lip care, we cannot accept returns once opened. If your product arrives damaged in transit, please message us on WhatsApp with photos for an immediate replacement. ♥',
+      allergy_advice:
+        'Even 100% natural and organic botanicals can cause sensitivity in rare cases. We recommend swatching a tiny amount on your inner wrist or jawline before first use. Discontinue if irritation occurs.',
       sort_order: products.length + 1,
     });
   };
@@ -64,7 +81,19 @@ export const AdminProducts: React.FC = () => {
   const handleEdit = (prod: ProductRow) => {
     setIsNew(false);
     setSaveStatus(null);
-    setEditingProduct({ ...prod });
+    const extra = productExtras[prod.slug] || (prod.id ? productExtras[prod.id] : undefined);
+    setEditingProduct({
+      ...prod,
+      how_to_use: extra?.how_to_use || prod.how_to_use || 'Slide open and smooth over clean lips whenever they need love.',
+      return_policy:
+        extra?.return_policy ||
+        prod.return_policy ||
+        'Due to the hygienic nature of homemade lip care, we cannot accept returns once opened. If your product arrives damaged in transit, please message us on WhatsApp with photos for an immediate replacement. ♥',
+      allergy_advice:
+        extra?.allergy_advice ||
+        prod.allergy_advice ||
+        'Even 100% natural and organic botanicals can cause sensitivity in rare cases. We recommend swatching a tiny amount on your inner wrist or jawline before first use. Discontinue if irritation occurs.',
+    });
   };
 
   const handleDelete = async (id: string, name: string) => {
@@ -86,7 +115,7 @@ export const AdminProducts: React.FC = () => {
 
     setSaveStatus('Saving changes...');
 
-    const payload = {
+    const basePayload: any = {
       name: editingProduct.name.trim(),
       slug: editingProduct.slug.trim().toLowerCase().replace(/\s+/g, '-'),
       category: editingProduct.category || 'lip-balm',
@@ -108,29 +137,75 @@ export const AdminProducts: React.FC = () => {
       sort_order: editingProduct.sort_order ?? 0,
     };
 
+    const extendedPayload = {
+      ...basePayload,
+      return_policy: editingProduct.return_policy || null,
+      allergy_advice: editingProduct.allergy_advice || null,
+    };
+
+    // Helper to persist to site_settings product_extras
+    const syncExtras = async (slug: string) => {
+      try {
+        const updatedExtras = {
+          ...productExtras,
+          [slug]: {
+            how_to_use: editingProduct.how_to_use || '',
+            return_policy: editingProduct.return_policy || '',
+            allergy_advice: editingProduct.allergy_advice || '',
+          },
+        };
+        await supabase.from('site_settings').upsert({
+          key: 'product_extras',
+          value: updatedExtras,
+          is_public: true,
+          updated_at: new Date().toISOString(),
+        });
+        setProductExtras(updatedExtras);
+      } catch (err) {
+        console.warn('Notice syncing product extras:', err);
+      }
+    };
+
     if (isNew) {
-      const { data, error } = await supabase.from('products').insert(payload).select().single();
-      if (error) {
-        setSaveStatus(`Error creating product: ${error.message}`);
+      let insertResult = await supabase.from('products').insert(extendedPayload).select().single();
+      if (insertResult.error && insertResult.error.message?.includes('column')) {
+        // Fallback without new columns if DB table lacks them
+        insertResult = await supabase.from('products').insert(basePayload).select().single();
+      }
+
+      if (insertResult.error) {
+        setSaveStatus(`Error creating product: ${insertResult.error.message}`);
       } else {
+        await syncExtras(basePayload.slug);
         setSaveStatus('Product created successfully! ✨');
-        if (data) setProducts([...products, data]);
+        if (insertResult.data) setProducts([...products, insertResult.data]);
         setTimeout(() => setEditingProduct(null), 1000);
       }
     } else if (editingProduct.id) {
-      const { data, error } = await supabase
+      let updateResult = await supabase
         .from('products')
-        .update(payload)
+        .update(extendedPayload)
         .eq('id', editingProduct.id)
         .select()
         .single();
 
-      if (error) {
-        setSaveStatus(`Error updating product: ${error.message}`);
+      if (updateResult.error && updateResult.error.message?.includes('column')) {
+        // Fallback without new columns if DB table lacks them
+        updateResult = await supabase
+          .from('products')
+          .update(basePayload)
+          .eq('id', editingProduct.id)
+          .select()
+          .single();
+      }
+
+      if (updateResult.error) {
+        setSaveStatus(`Error updating product: ${updateResult.error.message}`);
       } else {
+        await syncExtras(basePayload.slug);
         setSaveStatus('Changes saved! Takes effect on site immediately. ✨');
-        if (data) {
-          setProducts(products.map((p) => (p.id === data.id ? data : p)));
+        if (updateResult.data) {
+          setProducts(products.map((p) => (p.id === updateResult.data.id ? updateResult.data : p)));
         }
         setTimeout(() => setEditingProduct(null), 1000);
       }
@@ -627,6 +702,64 @@ export const AdminProducts: React.FC = () => {
                     }
                     placeholder="Organic Beeswax, Raw Shea Butter, Sweet Almond Oil"
                     className="w-full bg-cream/40 border border-hairline rounded p-2 text-ink focus:outline-none focus:border-ink"
+                  />
+                </div>
+              </div>
+
+              {/* Product Usage, Return Policy & Allergy Advice Accordions */}
+              <div className="p-4 bg-cream/50 rounded-card border border-hairline space-y-4">
+                <div className="flex items-center gap-2 border-hairline-b pb-2">
+                  <Doodle name="heart" size={14} className="text-heart" />
+                  <span className="text-[11px] font-medium uppercase tracking-eyebrow text-ink font-sans">
+                    Product Usage, Return Policy &amp; Allergy Review
+                  </span>
+                </div>
+
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="text-[11px] font-medium uppercase tracking-eyebrow text-ink-soft">
+                      How to Use Product *
+                    </label>
+                    <span className="text-[10px] text-ink-soft">Product page &quot;How to Use&quot; tab</span>
+                  </div>
+                  <textarea
+                    rows={2}
+                    value={editingProduct.how_to_use || ''}
+                    onChange={(e) => setEditingProduct({ ...editingProduct, how_to_use: e.target.value })}
+                    placeholder="e.g. Slide open and smooth over clean lips whenever they need love. Reapply generously before sleep..."
+                    className="w-full bg-ivory border border-hairline rounded p-2 text-ink focus:outline-none focus:border-ink text-xs"
+                  />
+                </div>
+
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="text-[11px] font-medium uppercase tracking-eyebrow text-ink-soft">
+                      Return &amp; Replacement Policy *
+                    </label>
+                    <span className="text-[10px] text-ink-soft">Product page &quot;Shipping &amp; Returns&quot; tab</span>
+                  </div>
+                  <textarea
+                    rows={2}
+                    value={editingProduct.return_policy || ''}
+                    onChange={(e) => setEditingProduct({ ...editingProduct, return_policy: e.target.value })}
+                    placeholder="e.g. Due to the hygienic nature of homemade lip care, we cannot accept returns once opened. If your product arrives damaged in transit, message us on WhatsApp with photos for an immediate replacement. ♥"
+                    className="w-full bg-ivory border border-hairline rounded p-2 text-ink focus:outline-none focus:border-ink text-xs"
+                  />
+                </div>
+
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="text-[11px] font-medium uppercase tracking-eyebrow text-ink-soft">
+                      Skin Patch Test &amp; Allergy Review / Advice *
+                    </label>
+                    <span className="text-[10px] text-ink-soft">Product page &quot;Skin Patch Test &amp; Allergy Advice&quot; box</span>
+                  </div>
+                  <textarea
+                    rows={2}
+                    value={editingProduct.allergy_advice || ''}
+                    onChange={(e) => setEditingProduct({ ...editingProduct, allergy_advice: e.target.value })}
+                    placeholder="e.g. Even 100% natural and organic botanicals can cause sensitivity in rare cases. We recommend swatching a tiny amount on your inner wrist or jawline before first use. Discontinue if irritation occurs."
+                    className="w-full bg-ivory border border-hairline rounded p-2 text-ink focus:outline-none focus:border-ink text-xs"
                   />
                 </div>
               </div>

@@ -165,7 +165,8 @@ export const ProductDetail: React.FC = () => {
             <strong>Handmade Items Policy:</strong> {settings.shippingNote}
           </p>
           <p>
-            Due to the hygienic nature of homemade lip care, we cannot accept returns once opened. If your product arrives damaged in transit, please message us on WhatsApp with photos for an immediate replacement. ♥
+            {product.returnPolicy ||
+              'Due to the hygienic nature of homemade lip care, we cannot accept returns once opened. If your product arrives damaged in transit, please message us on WhatsApp with photos for an immediate replacement. ♥'}
           </p>
         </div>
       ),
@@ -180,7 +181,8 @@ export const ProductDetail: React.FC = () => {
             <span>Patch Test Recommended</span>
           </p>
           <p>
-            Even 100% natural and organic botanicals can cause sensitivity in rare cases. We recommend swatching a tiny amount on your inner wrist or jawline before first use. Discontinue if irritation occurs.
+            {product.allergyAdvice ||
+              'Even 100% natural and organic botanicals can cause sensitivity in rare cases. We recommend swatching a tiny amount on your inner wrist or jawline before first use. Discontinue if irritation occurs.'}
           </p>
         </div>
       ),

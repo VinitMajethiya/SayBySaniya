@@ -8,16 +8,18 @@ import { AdminEnquiries } from '@/components/admin/AdminEnquiries';
 import { AdminOrders } from '@/components/admin/AdminOrders';
 import { AdminReviews } from '@/components/admin/AdminReviews';
 import { AdminStory } from '@/components/admin/AdminStory';
+import { AdminAbout } from '@/components/admin/AdminAbout';
 import { Doodle } from '@/components/brand/Doodle';
 
 export type AdminTab =
   | 'dashboard'
   | 'products'
+  | 'about'
+  | 'story'
   | 'enquiries'
   | 'orders'
   | 'deals'
-  | 'reviews'
-  | 'story';
+  | 'reviews';
 
 export const Admin: React.FC = () => {
   const { user, isAdmin, loading, error, login, logout } = useAdminAuth();
@@ -61,11 +63,12 @@ export const Admin: React.FC = () => {
   const tabs: { id: AdminTab; label: string; icon: 'heart' | 'bow' | 'sparkle' | 'star' }[] = [
     { id: 'dashboard', label: 'Dashboard', icon: 'heart' },
     { id: 'products', label: 'Products & Photos', icon: 'bow' },
-    { id: 'enquiries', label: 'Enquiries', icon: 'heart' },
+    { id: 'about', label: 'About Brand', icon: 'sparkle' },
+    { id: 'story', label: 'Our Story & Photos', icon: 'bow' },
     { id: 'orders', label: 'Orders', icon: 'sparkle' },
+    { id: 'enquiries', label: 'Enquiries', icon: 'heart' },
     { id: 'deals', label: 'Special Deals', icon: 'sparkle' },
     { id: 'reviews', label: 'Reviews', icon: 'star' },
-    { id: 'story', label: 'Our Story & Photos', icon: 'bow' },
   ];
 
   return (
@@ -153,11 +156,12 @@ export const Admin: React.FC = () => {
       <main className="flex-grow max-w-6xl w-full mx-auto p-4 sm:p-6 lg:p-8">
         {activeTab === 'dashboard' && <AdminDashboard onNavigate={(t) => setActiveTab(t as AdminTab)} />}
         {activeTab === 'products' && <AdminProducts />}
-        {activeTab === 'enquiries' && <AdminEnquiries />}
+        {activeTab === 'about' && <AdminAbout />}
+        {activeTab === 'story' && <AdminStory />}
         {activeTab === 'orders' && <AdminOrders />}
+        {activeTab === 'enquiries' && <AdminEnquiries />}
         {activeTab === 'deals' && <AdminDeals />}
         {activeTab === 'reviews' && <AdminReviews />}
-        {activeTab === 'story' && <AdminStory />}
       </main>
 
       {/* Admin Mobile Footer Tab Bar */}

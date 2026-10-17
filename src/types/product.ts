@@ -21,6 +21,8 @@ export interface Product {
   flavorNotes: string[];
   ingredients: string[];
   howToUse: string;
+  returnPolicy?: string;
+  allergyAdvice?: string;
   images: string[];
   badges: string[];
   status: ProductStatus;

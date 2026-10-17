@@ -49,7 +49,9 @@ $$;
 -- update public.products set category = 'lip-balm', packaging = 'tin', price = 29900 where slug in ('strawberry-jam', 'honey-butter', 'vanilla-silk');
 -- update public.products set category = 'lip-mask', packaging = 'jar', price = 19900 where slug = 'over-night-lip-mask';
 -- update public.products set category = 'lip-tint', packaging = 'bottle', price = 34900, status = 'available' where slug in ('blood-water-tint', 'lip-tint');
--- update public.products set category = 'lip-gloss', packaging = 'bottle', price = 34900, status = 'available' where slug = 'lip-gloss';
+-- alter table public.products 
+--   add column if not exists return_policy text,
+--   add column if not exists allergy_advice text;
 -- ------------------------------------------------------------------------------
 
 create table if not exists public.products (
@@ -72,6 +74,8 @@ create table if not exists public.products (
   ingredients text[] default '{}',
   claims text[] default '{}',
   how_to_use text,
+  return_policy text,
+  allergy_advice text,
   sort_order integer default 0,
   created_at timestamptz default now(),
   updated_at timestamptz default now()

@@ -106,6 +106,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate }) =>
       color: 'text-ink',
       bg: 'bg-ivory',
     },
+    {
+      title: 'About the Brand',
+      count: 'Live',
+      action: 'Edit Values & Brand Philosophy',
+      tab: 'about',
+      doodle: 'heart' as const,
+      color: 'text-heart',
+      bg: 'bg-cream',
+    },
   ];
 
   return (

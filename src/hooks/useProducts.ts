@@ -28,7 +28,10 @@ function mapStatus(dbStatus: string): ProductStatus {
   }
 }
 
-function mapRowToProduct(row: ProductRow): Product {
+function mapRowToProduct(
+  row: ProductRow,
+  extras?: Record<string, { how_to_use?: string; return_policy?: string; allergy_advice?: string }>
+): Product {
   const accent = determineAccent(row.slug);
   const category = (row.category as any) || (
     row.slug.includes('mask')
@@ -47,6 +50,11 @@ function mapRowToProduct(row: ProductRow): Product {
       : 'tin'
   );
 
+  const extra = extras?.[row.slug] || (row.id ? extras?.[row.id] : undefined);
+  const howToUse = extra?.how_to_use || row.how_to_use || 'Swipe on lips whenever they need love.';
+  const returnPolicy = extra?.return_policy || row.return_policy || undefined;
+  const allergyAdvice = extra?.allergy_advice || row.allergy_advice || undefined;
+
   return {
     id: row.id,
     slug: row.slug,
@@ -63,7 +71,9 @@ function mapRowToProduct(row: ProductRow): Product {
     description: row.description,
     flavorNotes: row.flavor_notes || [],
     ingredients: row.ingredients || [],
-    howToUse: row.how_to_use || 'Swipe on lips whenever they need love.',
+    howToUse,
+    returnPolicy,
+    allergyAdvice,
     images:
       row.images && row.images.length > 0
         ? row.images
@@ -95,20 +105,48 @@ export function useProducts() {
     }
 
     try {
-      const { data, error: queryError } = await supabase
-        .from('products')
-        .select('*')
-        .order('sort_order', { ascending: true });
+      const [productsRes, extrasRes] = await Promise.all([
+        supabase
+          .from('products')
+          .select('*')
+          .order('sort_order', { ascending: true }),
+        supabase
+          .from('site_settings')
+          .select('value')
+          .eq('key', 'product_extras')
+          .maybeSingle(),
+      ]);
 
-      if (queryError) {
-        console.warn('[useProducts] Supabase fetch error, using fallback:', queryError.message);
-        setError(queryError.message);
-        setProducts(localFallbackProducts as unknown as Product[]);
-      } else if (data && data.length > 0) {
-        setProducts(data.map(mapRowToProduct));
+      const extras = (extrasRes.data?.value || {}) as Record<string, any>;
+
+      if (productsRes.error) {
+        console.warn('[useProducts] Supabase fetch error, using fallback:', productsRes.error.message);
+        setError(productsRes.error.message);
+        // Apply extras to fallback
+        const fallbackWithExtras = (localFallbackProducts as unknown as Product[]).map((p) => {
+          const extra = extras[p.slug] || extras[p.id];
+          return {
+            ...p,
+            howToUse: extra?.how_to_use || p.howToUse,
+            returnPolicy: extra?.return_policy || p.returnPolicy,
+            allergyAdvice: extra?.allergy_advice || p.allergyAdvice,
+          };
+        });
+        setProducts(fallbackWithExtras);
+      } else if (productsRes.data && productsRes.data.length > 0) {
+        setProducts(productsRes.data.map((row) => mapRowToProduct(row, extras)));
       } else {
         // Empty DB, use fallback
-        setProducts(localFallbackProducts as unknown as Product[]);
+        const fallbackWithExtras = (localFallbackProducts as unknown as Product[]).map((p) => {
+          const extra = extras[p.slug] || extras[p.id];
+          return {
+            ...p,
+            howToUse: extra?.how_to_use || p.howToUse,
+            returnPolicy: extra?.return_policy || p.returnPolicy,
+            allergyAdvice: extra?.allergy_advice || p.allergyAdvice,
+          };
+        });
+        setProducts(fallbackWithExtras);
       }
     } catch (err) {
       console.warn('[useProducts] Network error, using fallback:', err);

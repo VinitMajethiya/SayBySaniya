@@ -59,6 +59,8 @@ export interface Database {
           ingredients: string[];
           claims: string[];
           how_to_use: string | null;
+          return_policy?: string | null;
+          allergy_advice?: string | null;
           sort_order: number;
           created_at: string;
           updated_at: string;
@@ -83,6 +85,8 @@ export interface Database {
           ingredients?: string[];
           claims?: string[];
           how_to_use?: string | null;
+          return_policy?: string | null;
+          allergy_advice?: string | null;
           sort_order?: number;
           created_at?: string;
           updated_at?: string;
@@ -107,6 +111,8 @@ export interface Database {
           ingredients?: string[];
           claims?: string[];
           how_to_use?: string | null;
+          return_policy?: string | null;
+          allergy_advice?: string | null;
           sort_order?: number;
           created_at?: string;
           updated_at?: string;
