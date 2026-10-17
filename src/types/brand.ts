@@ -17,12 +17,18 @@ export interface AboutBrandData {
   footerTagline: string;
   ctaText: string;
   ctaLink: string;
+  whyChooseEyebrow?: string;
+  whyChooseTitle?: string;
+  whyChooseSubtitle?: string;
 }
 
 export const DEFAULT_ABOUT_BRAND: AboutBrandData = {
   eyebrow: 'OUR VALUES',
   title: 'Homemade, Organic Lip Care for Every Day',
   subtitle: 'Crafted by hand in small batches. Nourish. Tint. Love.',
+  whyChooseEyebrow: 'WHY CHOOSE US',
+  whyChooseTitle: 'Why Choose Say By Saniya',
+  whyChooseSubtitle: 'Homemade, organic lip care for every day. Nourish. Tint. Love.',
   cards: [
     {
       id: 'val-1',

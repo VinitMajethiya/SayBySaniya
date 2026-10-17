@@ -284,7 +284,7 @@ export const AdminAbout: React.FC = () => {
                     2. Brand Value Cards
                   </h3>
                   <p className="text-[11px] text-ink-soft">
-                    The 3 (or more) feature cards showcasing your brand promises
+                    Displayed on both the Homepage (&quot;Why Choose Say By Saniya&quot;) and the About Us page
                   </p>
                 </div>
               </div>
@@ -387,6 +387,51 @@ export const AdminAbout: React.FC = () => {
                   </span>
                 </div>
               ))}
+            </div>
+
+            {/* Homepage Section Headings Customization */}
+            <div className="pt-4 border-hairline-t space-y-2">
+              <span className="text-[10px] font-sans font-semibold uppercase tracking-wider text-ink-soft block">
+                Homepage &quot;Why Choose Us&quot; Headings (Optional Customization):
+              </span>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs font-sans">
+                <div>
+                  <label className="block text-[10px] font-medium uppercase tracking-eyebrow text-ink-soft mb-1">
+                    Homepage Eyebrow
+                  </label>
+                  <input
+                    type="text"
+                    value={data.whyChooseEyebrow || ''}
+                    onChange={(e) => setData({ ...data, whyChooseEyebrow: e.target.value })}
+                    placeholder="WHY CHOOSE US"
+                    className="w-full bg-cream/40 border border-hairline rounded p-2 text-ink text-xs focus:outline-none focus:border-ink uppercase"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-medium uppercase tracking-eyebrow text-ink-soft mb-1">
+                    Homepage Title
+                  </label>
+                  <input
+                    type="text"
+                    value={data.whyChooseTitle || ''}
+                    onChange={(e) => setData({ ...data, whyChooseTitle: e.target.value })}
+                    placeholder="Why Choose Say By Saniya"
+                    className="w-full bg-cream/40 border border-hairline rounded p-2 text-ink text-xs focus:outline-none focus:border-ink"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-medium uppercase tracking-eyebrow text-ink-soft mb-1">
+                    Homepage Subtitle
+                  </label>
+                  <input
+                    type="text"
+                    value={data.whyChooseSubtitle || ''}
+                    onChange={(e) => setData({ ...data, whyChooseSubtitle: e.target.value })}
+                    placeholder="Homemade, organic lip care for every day. Nourish. Tint. Love."
+                    className="w-full bg-cream/40 border border-hairline rounded p-2 text-ink text-xs focus:outline-none focus:border-ink"
+                  />
+                </div>
+              </div>
             </div>
           </div>
 
